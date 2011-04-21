@@ -6,12 +6,16 @@ import grails.plugins.selenium.SeleniumAware
 class GoogleTests extends GroovyTestCase {
 
 	void testHitRemoteServerWithoutStartingGrails() {
-		selenium.open "/"
-		assertEquals "Google", selenium.title
 
-		selenium.type "css=form input[name=q]", "Grails"
-		selenium.clickAndWait "css=form input[name=btnG]"
-		assertEquals "Grails - Google Search", selenium.title
+		selenium.open("/");
+		selenium.type("q", "Grails");
+		selenium.fireEvent("q", "keyUp");
+		for (int second = 0;; second++) {
+			if (second >= 60) fail("timeout");
+			try { if (selenium.isTextPresent("www.grails.org")) break; } catch (Exception e) {}
+			Thread.sleep(1000);
+		}
+
 	}
 
 }
